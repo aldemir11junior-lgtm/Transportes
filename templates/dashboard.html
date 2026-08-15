@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}Dashboard{% endblock %}
+{% block cabecalho %}Painel Operacional: Transportadora XYZ{% endblock %}
+
+{% block conteudo %}
+<div class="grid cols-3" style="margin-bottom:18px;">
+  <div class="panel">
+    <h2>Faturamento vs. Custo Total (R$)</h2>
+    <canvas id="graficoFaturamento" height="180"></canvas>
+  </div>
+
+  <div class="panel">
+    <h2>Volume de Carga Movimentada (Toneladas)</h2>
+    <canvas id="graficoVolume" height="180"></canvas>
+  </div>
+
+  <div class="panel" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <h2 style="align-self:flex-start;">Custo Médio por KM (R$/KM)</h2>
+    <div class="kpi-value" id="kpiCustoKm">--</div>
+    <p class="helper-text">Média calculada sobre todas as viagens com distância informada</p>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="toolbar">
+    <h2 style="margin:0;">Últimas viagens lançadas</h2>
+    <a href="{{ url_for('listar_viagens') }}" class="btn btn-secondary">Ver todas</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Data</th><th>Veículo</th><th>Motorista</th>
+        <th>Origem</th><th>Destino</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in ultimas_viagens %}
+      <tr>
+        <td>{{ v.id }}</td>
+        <td>{{ v.data.strftime('%d/%m/%Y') }}</td>
+        <td>{{ v.veiculo.placa }}</td>
+        <td>{{ v.motorista.nome }}</td>
+        <td>{{ v.origem }}</td>
+        <td>{{ v.destino }}</td>
+        <td><span class="badge {{ v.status }}">{{ v.status.replace('_',' ') }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="helper-text">Nenhuma viagem lançada ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

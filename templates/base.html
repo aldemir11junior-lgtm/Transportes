@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Painel Operacional{% endblock %} · Transportadora XYZ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">🚚 TRANSPORTES XYZ</div>
+      <nav>
+        <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">📊 Dashboard</a>
+        <a href="{{ url_for('listar_viagens') }}" class="{{ 'active' if request.endpoint in ['listar_viagens','nova_viagem','editar_viagem'] }}">🚛 Viagens</a>
+        <a href="{{ url_for('motoristas') }}" class="{{ 'active' if request.endpoint=='motoristas' }}">👤 Motoristas</a>
+        <a href="{{ url_for('veiculos') }}" class="{{ 'active' if request.endpoint=='veiculos' }}">🚐 Frota</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <h1>{% block cabecalho %}{% endblock %}</h1>
+        <div class="user-box">
+          {% if current_user.is_authenticated %}
+            <span>{{ current_user.nome }} · <em>{{ current_user.perfil }}</em></span>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Sair</a>
+          {% endif %}
+        </div>
+      </div>
+
+      {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% if mensagens %}
+          {% for categoria, msg in mensagens %}
+            <div class="alert alert-{{ categoria }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block conteudo %}{% endblock %}
+    </main>
+  </div>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

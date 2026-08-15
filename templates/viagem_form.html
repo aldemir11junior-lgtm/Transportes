@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if viagem else 'Nova' }} Viagem{% endblock %}
+{% block cabecalho %}{{ 'Editar Viagem' if viagem else 'Lançar Nova Viagem' }}{% endblock %}
+
+{% block conteudo %}
+<div class="panel">
+  <form method="POST">
+    <div class="form-grid">
+      <div class="field">
+        <label>Data da viagem *</label>
+        <input type="date" name="data" required
+               value="{{ viagem.data.isoformat() if viagem else '' }}">
+      </div>
+
+      <div class="field">
+        <label>Status *</label>
+        <select name="status" required>
+          {% for valor, rotulo in [('em_transito','Em Trânsito'), ('concluida','Concluída'),
+                                    ('atrasada','Atrasada'), ('cancelada','Cancelada')] %}
+          <option value="{{ valor }}" {{ 'selected' if viagem and viagem.status==valor }}>{{ rotulo }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Veículo *</label>
+        <select name="veiculo_id" required>
+          <option value="">Selecione...</option>
+          {% for vc in veiculos %}
+          <option value="{{ vc.id }}" {{ 'selected' if viagem and viagem.veiculo_id==vc.id }}>
+            {{ vc.placa }} — {{ vc.modelo }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Motorista *</label>
+        <select name="motorista_id" required>
+          <option value="">Selecione...</option>
+          {% for m in motoristas %}
+          <option value="{{ m.id }}" {{ 'selected' if viagem and viagem.motorista_id==m.id }}>
+            {{ m.nome }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Origem *</label>
+        <input type="text" name="origem" required placeholder="Cidade de origem"
+               value="{{ viagem.origem if viagem else '' }}">
+      </div>
+
+      <div class="field">
+        <label>Destino *</label>
+        <input type="text" name="destino" required placeholder="Cidade de destino"
+               value="{{ viagem.destino if viagem else '' }}">
+      </div>
+
+      <div class="field">
+        <label>Distância (KM)</label>
+        <input type="number" step="0.01" min="0" name="distancia_km"
+               value="{{ viagem.distancia_km if viagem else 0 }}">
+      </div>
+
+      <div class="field">
+        <label>Volume transportado (toneladas)</label>
+        <input type="number" step="0.01" min="0" name="volume_tons"
+               value="{{ viagem.volume_tons if viagem else 0 }}">
+      </div>
+
+      <div class="field">
+        <label>Faturamento (R$) *</label>
+        <input type="number" step="0.01" min="0" name="faturamento" required
+               value="{{ viagem.faturamento if viagem else 0 }}">
+      </div>
+
+      <div class="field">
+        <label>Custo total (R$) *</label>
+        <input type="number" step="0.01" min="0" name="custo_total" required
+               value="{{ viagem.custo_total if viagem else 0 }}">
+      </div>
+
+      <div class="field full">
+        <label>Observações</label>
+        <textarea name="observacoes" rows="3">{{ viagem.observacoes if viagem else '' }}</textarea>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; display:flex; gap:10px;">
+      <button type="submit" class="btn btn-primary">💾 Salvar viagem</button>
+      <a href="{{ url_for('listar_viagens') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

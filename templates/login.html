@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar · Transportadora XYZ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <h1>🚚 Transportadora XYZ</h1>
+      <p>Acesso restrito à equipe interna</p>
+
+      {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% if mensagens %}
+          {% for categoria, msg in mensagens %}
+            <div class="alert alert-{{ categoria }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST">
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" name="email" required autofocus placeholder="voce@xyz.com">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" name="senha" required placeholder="••••••">
+        </div>
+        <button type="submit" class="btn btn-primary">Entrar</button>
+      </form>
+
+      <p class="helper-text">
+        Exemplo: gerente@xyz.com / 123456 (gerente)<br>
+        operacional@xyz.com / 123456 (operacional)
+      </p>
+    </div>
+  </div>
+</body>
+</html>

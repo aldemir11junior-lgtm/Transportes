@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}Viagens{% endblock %}
+{% block cabecalho %}Viagens{% endblock %}
+
+{% block conteudo %}
+<div class="panel">
+  <div class="toolbar">
+    <h2 style="margin:0;">Últimas viagens lançadas</h2>
+    <a href="{{ url_for('nova_viagem') }}" class="btn btn-primary">+ Nova viagem</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Data</th><th>Veículo</th><th>Motorista</th>
+        <th>Origem</th><th>Destino</th><th>Faturamento</th><th>Custo</th>
+        <th>Status</th><th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in paginacao.items %}
+      <tr>
+        <td>{{ v.id }}</td>
+        <td>{{ v.data.strftime('%d/%m/%Y') }}</td>
+        <td>{{ v.veiculo.placa }}</td>
+        <td>{{ v.motorista.nome }}</td>
+        <td>{{ v.origem }}</td>
+        <td>{{ v.destino }}</td>
+        <td>R$ {{ "%.2f"|format(v.faturamento) }}</td>
+        <td>R$ {{ "%.2f"|format(v.custo_total) }}</td>
+        <td><span class="badge {{ v.status }}">{{ v.status.replace('_',' ') }}</span></td>
+        <td>
+          <a href="{{ url_for('editar_viagem', viagem_id=v.id) }}" class="btn-icon" title="Editar">✏️</a>
+          {% if current_user.perfil == 'gerente' %}
+          <form action="{{ url_for('excluir_viagem', viagem_id=v.id) }}" method="POST" style="display:inline"
+                onsubmit="return confirm('Excluir esta viagem?');">
+            <button type="submit" class="btn-icon" title="Excluir">🗑️</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="10" class="helper-text">Nenhuma viagem cadastrada ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    {% if paginacao.has_prev %}
+      <a href="{{ url_for('listar_viagens', pagina=paginacao.prev_num) }}">‹ Anterior</a>
+    {% endif %}
+    <span class="active">{{ paginacao.page }} / {{ paginacao.pages or 1 }}</span>
+    {% if paginacao.has_next %}
+      <a href="{{ url_for('listar_viagens', pagina=paginacao.next_num) }}">Próxima ›</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
