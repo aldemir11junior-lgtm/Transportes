@@ -390,6 +390,10 @@ def _validar_e_salvar_viagem(form, viagem=None):
 app = criar_app()
 
 if __name__ == "__main__":
-    # debug=True facilita o desenvolvimento (recarrega sozinho e mostra erros).
-    # Em produção, troque para debug=False e use um servidor como gunicorn/waitress.
-    app.run(debug=True, port=5000)
+    # Localmente roda com debug=True (facilita o desenvolvimento).
+    # Em produção (Render, etc.) o Gunicorn é quem sobe o app, essa parte
+    # nem é executada — mas mantemos por segurança lendo variáveis de ambiente.
+    import os
+    porta = int(os.environ.get("PORT", 5000))
+    modo_debug = os.environ.get("FLASK_DEBUG", "true").lower() == "true"
+    app.run(debug=modo_debug, host="0.0.0.0", port=porta)
